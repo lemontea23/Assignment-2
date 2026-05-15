@@ -1,3 +1,755 @@
+Assignment No. 1 — RMI (Remote Method Invocation)
+Aim
+
+Implement multi-threaded client/server process communication using RMI.
+
+1. THEORY (Important for Viva)
+What is RMI?
+
+RMI stands for Remote Method Invocation.
+It is a Java API that allows one Java object to call methods of another Java object located on another machine or another JVM.
+
+In simple words:
+
+Client sends request
+Server processes request
+Server returns response
+
+RMI is used in distributed systems where programs communicate over a network.
+
+Real Life Example
+
+Suppose:
+
+Your phone app = Client
+Bank server = Server
+
+When you check balance:
+
+App sends request
+Bank server processes it
+Server sends balance back
+
+This is similar to RMI communication.
+
+Components of RMI
+1. Remote Interface
+
+Defines methods that client can call remotely.
+
+Example:
+
+public String query(String search)
+2. Stub Object (Client Side)
+
+Stub acts like a proxy on client side.
+
+Work:
+
+Accept request from client
+Convert request into network format
+Send to server
+3. Skeleton Object (Server Side)
+
+Skeleton receives request from stub.
+
+Work:
+
+Accept request
+Call actual server method
+Send result back
+4. RMI Registry
+
+Registry stores remote object references.
+
+Client uses registry to locate server object.
+
+Command:
+
+rmiregistry
+Architecture Flow
+Client → Stub → Network → Skeleton → Server Object
+2. PROGRAM FILES
+
+Your assignment contains:
+
+Search.java
+SearchQuery.java
+Server.java
+Client.java
+
+3. CODE EXPLANATION
+FILE 1 — Search.java
+import java.rmi.*;
+
+public interface Search extends Remote {
+    public String query(String search) throws RemoteException;
+}
+Explanation
+import java.rmi.*;
+
+Imports RMI package.
+
+interface Search
+
+Creates remote interface.
+
+This interface contains methods that client can call remotely.
+
+extends Remote
+
+Makes interface remote.
+
+Without this:
+
+RMI will not work.
+query(String search)
+
+Method for searching text.
+
+Returns:
+
+String
+throws RemoteException
+
+Handles network-related errors.
+
+Very important in RMI.
+
+Viva Explanation
+
+“Search.java is a remote interface. It defines methods that can be accessed remotely by the client. It extends Remote interface and methods throw RemoteException.”
+
+FILE 2 — SearchQuery.java
+import java.rmi.*;
+import java.rmi.server.*;
+
+public class SearchQuery extends UnicastRemoteObject implements Search {
+Explanation
+UnicastRemoteObject
+
+Used to create remote server object.
+
+implements Search
+
+Implements remote interface.
+
+public SearchQuery() throws RemoteException {
+    super();
+}
+
+Constructor initializes remote object.
+
+public String query(String search)
+
+Method implementation.
+
+if(search.equals("Reflection in Java"))
+
+Checks whether entered string matches.
+
+result = "Found";
+
+If matched.
+
+Else:
+
+result = "Not Found";
+Viva Explanation
+
+“SearchQuery.java implements the remote interface and provides actual implementation of remote methods. UnicastRemoteObject exports object so client can access it remotely.”
+
+FILE 3 — Server.java
+private ServerSocket server = null;
+
+Creates server socket.
+
+server = new ServerSocket(port);
+
+Starts server at specific port.
+
+Example:
+
+5000
+socket = server.accept();
+
+Waits for client connection.
+
+DataInputStream
+
+Receives data from client.
+
+while (!"Over".equals(line))
+
+Runs until client sends:
+
+Over
+line = in.readUTF();
+
+Reads message.
+
+System.out.println(line);
+
+Displays received message.
+
+Viva Explanation
+
+“Server program waits for client connection using ServerSocket. After connection establishment it continuously receives data from client until ‘Over’ message is received.”
+
+FILE 4 — Client.java
+socket = new Socket(address, port);
+
+Connects client to server.
+
+BufferedReader
+
+Reads keyboard input.
+
+DataOutputStream
+
+Sends data to server.
+
+line = d.readLine();
+
+Reads message from keyboard.
+
+out.writeUTF(line);
+
+Sends message to server.
+
+Viva Explanation
+
+“Client program establishes connection with server using socket. It reads user input and sends messages to server.”
+
+4. HOW CLIENT-SERVER COMMUNICATION WORKS
+Step-by-Step
+Step 1
+
+Server starts.
+
+Step 2
+
+Server waits for client.
+
+Step 3
+
+Client connects.
+
+Step 4
+
+Client sends message.
+
+Step 5
+
+Server receives message.
+
+Step 6
+
+Communication continues until:
+
+Over
+5. HOW TO RUN PROGRAM
+Step 1 — Compile Interface
+javac Search.java
+Step 2 — Compile Implementation
+javac SearchQuery.java
+Step 3 — Generate Stub/Skeleton
+rmic SearchQuery
+
+Step 4 — Start Registry
+rmiregistry &
+
+Step 5 — Compile Server
+javac Server.java
+Step 6 — Run Server
+java Server
+Step 7 — Compile Client
+
+Open second terminal.
+
+javac Client.java
+Step 8 — Run Client
+java Client
+Expected Output
+Server Side
+Server started
+Waiting for a client ...
+Client accepted
+Hello
+DS practical
+Client Side
+Connected
+Done with 1st program of DS
+Hello
+DS practical
+Over
+6. IMPORTANT VIVA QUESTIONS
+Q1. What is RMI?
+
+RMI is a Java API that allows methods of remote objects to be invoked from another JVM.
+
+Q2. Why use RMI?
+
+Used for communication between distributed applications.
+
+Q3. What is Stub?
+
+Stub is client-side proxy object.
+It forwards client request to server.
+
+Q4. What is Skeleton?
+
+Skeleton receives request from stub and invokes actual server method.
+
+Q5. What is rmiregistry?
+
+It stores remote object references for clients.
+
+Q6. Why RemoteException is used?
+
+To handle communication/network failures.
+
+Q7. Difference between Client and Server?
+Client	Server
+Sends request	Processes request
+Uses Stub	Uses Skeleton
+Initiates communication	Waits for requests
+Q8. Why interface is required?
+
+Interface defines remote methods accessible by client.
+
+7. COMMON ERRORS
+Error 1
+Connection refused
+Reason
+
+Server not started.
+
+Fix
+
+Run:
+
+java Server
+Error 2
+rmiregistry not found
+Fix
+
+Install Java 8 properly.
+
+Error 3
+ClassNotFoundException
+Fix
+
+Compile all files again.
+
+javac *.java
+8. SHORT CONCLUSION
+
+“Thus we implemented client-server communication using Java RMI and studied remote method invocation in distributed systems.”
+
+9. HOW TO EXPLAIN COMPLETE PROGRAM IN VIVA (Best Answer)
+
+“First we create a remote interface using Search.java. Then SearchQuery.java implements that interface and provides method definition. Server.java creates server socket and waits for client requests. Client.java connects to server and sends messages. RMI registry helps client locate remote object. Communication happens using stub and skeleton objects.”
+
+10. SUPER IMPORTANT LAST-MINUTE POINTS
+
+Remember these keywords:
+
+RMI
+Remote Interface
+Stub
+Skeleton
+RemoteException
+rmiregistry
+Client-Server Architecture
+JVM
+Distributed System
+
+Assignment 1 complete.
+
+Now send:
+
+Assignment 3 code
+or type:
+Assignment No. 3 — MPI (Message Passing Interface)
+Aim
+
+Develop a distributed system to find sum of N elements in an array by distributing N/n elements to n number of processors using MPI.
+
+1. THEORY
+What is MPI?
+
+MPI stands for Message Passing Interface.
+It is used for communication between multiple processes in distributed systems.
+
+MPI helps:
+
+Parallel processing
+Faster execution
+Process communication
+Distributed computing
+Real Life Example
+
+Suppose:
+
+1 student solves 100 sums → takes long time
+4 students solve 25 sums each → faster
+
+Same concept is used in MPI.
+
+Task is divided among processors.
+
+Important MPI Concepts
+Term	Meaning
+Process	Independent running program
+Rank	Unique ID of process
+Master Process	Rank 0
+Worker Process	Other ranks
+MPI_Send	Send message
+MPI_Recv	Receive message
+MPI_Init	Starts MPI
+MPI_Finalize	Ends MPI
+Rank in MPI
+
+Each process gets unique rank.
+
+Example:
+
+0,1,2,3
+
+If 4 processors are used:
+
+Rank 0 → Master
+Rank 1 → Worker
+Rank 2 → Worker
+Rank 3 → Worker
+
+2. PROGRAMS IN ASSIGNMENT
+
+You have 3 programs:
+
+hello.c
+send_recv.c
+sum_array.c
+
+PROGRAM 1 — hello.c
+#include <stdio.h>
+#include "mpi.h"
+
+int main(int argc, char* argv[])
+{
+    int rank, size;
+
+    MPI_Init(&argc, &argv);
+
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+    MPI_Comm_size(MPI_COMM_WORLD, &size);
+
+    printf("Hello, world, I am %d of %d\n", rank, size);
+
+    MPI_Finalize();
+
+    return 0;
+}
+Code Explanation
+#include "mpi.h"
+
+Includes MPI library.
+
+Required for MPI functions.
+
+MPI_Init(&argc, &argv);
+
+Starts MPI environment.
+
+Without this MPI cannot work.
+
+MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+Gets process rank.
+
+Example:
+
+0
+1
+2
+3
+MPI_Comm_size(MPI_COMM_WORLD, &size);
+
+Gets total number of processes.
+
+printf
+
+Displays:
+
+Hello world I am 0 of 4
+
+Meaning:
+
+Rank = 0
+Total processes = 4
+MPI_Finalize();
+
+Ends MPI execution.
+
+Viva Explanation
+
+“This program demonstrates basic MPI communication. MPI_Init initializes MPI environment. MPI_Comm_rank gets rank of current process. MPI_Comm_size gets total number of processes. Each process prints its rank.”
+
+HOW TO RUN
+Compile
+mpicc hello.c
+Execute with 4 Processes
+mpirun -np 4 ./a.out
+Expected Output
+Hello world I am 0 of 4
+Hello world I am 1 of 4
+Hello world I am 2 of 4
+Hello world I am 3 of 4
+PROGRAM 2 — send_recv.c
+Purpose
+
+Demonstrates message passing between processes.
+
+Rank 0 sends data to Rank 1.
+
+CODE FLOW
+int num = 10;
+
+Data to send.
+
+Sender Side
+if(rank == 0)
+
+Rank 0 acts as sender.
+
+MPI_Send(&num, 1, MPI_INT, 1, 1, MPI_COMM_WORLD);
+
+Explanation:
+
+Parameter	Meaning
+&num	Data
+1	Number of elements
+MPI_INT	Integer type
+1	Destination rank
+1	Tag
+MPI_COMM_WORLD	Communicator
+Receiver Side
+MPI_Recv(&num, 1, MPI_INT, 0, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+Receives data from Rank 0.
+
+Viva Explanation
+
+“This program demonstrates communication between processes using MPI_Send and MPI_Recv. Rank 0 sends integer data to Rank 1.”
+
+HOW TO RUN
+Compile
+mpicc send_recv.c
+Execute
+mpirun -np 4 ./a.out
+Expected Output
+Sending message containing: 10 from rank 0
+At rank 1
+Received message containing: 10 at rank 1
+PROGRAM 3 — sum_array.c
+MOST IMPORTANT PROGRAM
+
+This is main assignment program.
+
+Aim of Program
+
+Add 20 numbers using 4 processors.
+
+Each processor calculates partial sum.
+
+Master combines all sums.
+
+WORKING
+
+Array:
+
+1 to 20
+
+Distributed among:
+
+4 processors
+
+Each processor gets:
+
+5 numbers
+DISTRIBUTION
+Rank	Numbers
+0	1-5
+1	6-10
+2	11-15
+3	16-20
+CODE EXPLANATION
+Array Creation
+int num[20];
+
+Stores 20 numbers.
+
+Initialize Array
+for(int i=0; i<20; i++)
+num[i] = i + 1;
+
+Stores:
+
+1 2 3 ... 20
+MASTER PROCESS
+if(rank == 0)
+
+Rank 0 acts as master.
+
+Sending Data
+MPI_Send(&num[i*5], 5, MPI_INT, i, 1, MPI_COMM_WORLD);
+
+Sends 5 numbers to each worker.
+
+LOCAL SUM
+local_sum += num[i];
+
+Each processor calculates local sum.
+
+RECEIVE SUMS
+MPI_Recv(&s[i], 1, MPI_INT, i, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+Master receives sums.
+
+FINAL SUM
+sum += s[i];
+
+Adds all local sums.
+
+Worker Process
+
+Workers:
+
+Receive numbers
+Compute local sum
+Send local sum back
+Example Calculation
+Rank 0
+1+2+3+4+5 = 15
+Rank 1
+6+7+8+9+10 = 40
+Rank 2
+11+12+13+14+15 = 65
+Rank 3
+16+17+18+19+20 = 90
+Final Sum
+15+40+65+90 = 210
+HOW TO RUN
+Compile
+mpicc sum_array.c
+Execute
+mpirun -np 4 ./a.out
+Expected Output
+Distribution at rank 0
+local sum at rank 0 is 15
+local sum at rank 1 is 40
+local sum at rank 2 is 65
+local sum at rank 3 is 90
+final sum = 210
+HOW TO EXPLAIN COMPLETE ASSIGNMENT IN VIVA
+
+“This assignment demonstrates distributed processing using MPI. MPI divides work among multiple processors. Rank 0 acts as master process while remaining ranks act as worker processes. Data is distributed using MPI_Send. Each processor calculates local sum and returns result using MPI_Recv. Finally master process computes total sum.”
+
+IMPORTANT ORAL QUESTIONS
+Q1. What is MPI?
+
+MPI stands for Message Passing Interface. It is used for communication between distributed processes.
+
+Q2. What is Rank?
+
+Rank is unique ID assigned to each process.
+
+Q3. What is MPI_Init?
+
+Initializes MPI environment.
+
+Q4. What is MPI_Finalize?
+
+Terminates MPI execution.
+
+Q5. What is MPI_Send?
+
+Used to send data between processes.
+
+Q6. What is MPI_Recv?
+
+Used to receive data.
+
+Q7. Why MPI is used?
+
+For parallel processing and faster execution.
+
+Q8. What is Master Process?
+
+Process with Rank 0.
+
+Q9. What is Parallel Processing?
+
+Executing multiple tasks simultaneously.
+
+Q10. Difference between Sequential and Parallel Processing?
+Sequential	Parallel
+One task at time	Multiple tasks
+Slower	Faster
+Single processor	Multiple processors
+COMMON ERRORS
+Error 1
+mpicc command not found
+Fix
+
+Install OpenMPI.
+
+Error 2
+mpirun not found
+Fix
+
+Set PATH properly.
+
+Error 3
+
+Program hangs.
+
+Reason
+
+MPI_Send or MPI_Recv mismatch.
+
+Installation Commands
+sudo apt-get update
+sudo apt install gcc
+
+Compile Command
+mpicc filename.c
+Execute Command
+mpirun -np 4 ./a.out
+
+SHORT CONCLUSION
+
+“Thus we implemented distributed computing using MPI and performed parallel sum calculation using multiple processors.”
+
+SUPER IMPORTANT KEYWORDS
+
+Remember these:
+
+MPI
+Rank
+Parallel Processing
+MPI_Send
+MPI_Recv
+Master Process
+Worker Process
+Distributed System
+Local Sum
+Final Sum
+
+
+
 Assignment No. 4 — Berkeley Clock Synchronization Algorithm
 Aim
 
